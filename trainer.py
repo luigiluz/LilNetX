@@ -29,6 +29,7 @@ from config import Config
 from dist_utils import DistUtils
 from resnet import _resnet, BasicBlock, Bottleneck, BlurPoolConv2d
 from resnet_cifar import _resnet_cifar, BasicBlockCifar
+from npz_loader import load_X_data, load_y_data, merge_X_y_data
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406]) * 255
 IMAGENET_STD = np.array([0.229, 0.224, 0.225]) * 255
@@ -244,6 +245,16 @@ class Trainer:
             trainset = torchvision.datasets.ImageFolder(
                                                 train_path,
                                                 transform_train)
+        elif conf_dataset['name'] == 'aut-eth-ids':
+            train_path = os.path.join(conf_dataset['trainroot'], 'train')
+            while os.path.exists(os.path.join(train_path,'train')):
+                train_X_path = os.path.join(train_path,'X_train_agg_labeled.npz')
+                train_y_path = os.path.join(train_path,'y_train_agg_labeled.npz')
+
+            X = load_X_data(train_X_path)
+            y = load_y_data(train_y_path)
+
+            trainset = merge_X_y_data(X, y)
 
         if self.dist.is_dist():
             train_sampler = ch.utils.data.distributed.DistributedSampler(trainset)
