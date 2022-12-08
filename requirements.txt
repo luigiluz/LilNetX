@@ -16,3 +16,5 @@ webdataset
 torchmetrics
 opencv-python
 numba
+wandb==0.13.6
+torchac==0.9.3
