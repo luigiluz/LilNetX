@@ -254,6 +254,9 @@ class Trainer:
             X = load_X_data(train_X_path)
             y = load_y_data(train_y_path)
 
+            _, counts = np.unique(np.array(y), return_counts=True)
+            print(f"Dindoors has {counts[0]} bening Xis and {counts[1]} injected Xis")
+
             trainset = merge_X_y_data(X, y)
 
         if self.dist.is_dist():
