@@ -496,7 +496,7 @@ class Trainer:
                             'dense1': BitEstimator(1), 'dense2': BitEstimator(2), 'dense3': BitEstimator(3)}
         elif 'cnn_ids' in conf_network['name']:
             prob_models = {
-                        'conv3x3':BitEstimator(9 if not conf_network['single_prob_model'] else 1),
+                        'conv5x5':BitEstimator(25 if not conf_network['single_prob_model'] else 1),
                         'dense':BitEstimator(1)
                         }
 
