@@ -82,9 +82,9 @@ dataset:
 
 # Network architecture params
 network:
-  name: 'resnet20'   # Architecture name - Choose from cifar_networks in main.py if dataset is cifar, else from ['resnet18', 'resnet50']
+  name: 'cnn_ids'   # Architecture name - Choose from cifar_networks in main.py if dataset is cifar, else from ['resnet18', 'resnet50']
   vanilla: False   # Do vanilla network training with no weight quantization/decoding
-  width: 4    # Width hyperparameter for resnets
+  width: 1    # Width hyperparameter for resnets
   # Initialization type for weight decoders and weights.
   # For cifar networks, weight decoders initialized with identity matrix if init_type is not 'random'
   # For imagenet networks, if init_type is 'var', boundary is calculated for each decoder and corresponding layer weight based on paper

@@ -29,6 +29,7 @@ from config import Config
 from dist_utils import DistUtils
 from resnet import _resnet, BasicBlock, Bottleneck, BlurPoolConv2d
 from resnet_cifar import _resnet_cifar, BasicBlockCifar
+from cnn_ids import ConvNetIDS
 from npz_loader import load_X_data, load_y_data, merge_X_y_data
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406]) * 255
@@ -461,6 +462,10 @@ class Trainer:
                             compress_bias = conf_network['compress_bias'], vanilla = conf_network['vanilla'], mode = conf_network['mode'], \
                             boundary = conf_network['boundary'], num_classes = conf_dataset['num_classes'], large = large, \
                             no_shift=conf_network['no_shift'])
+        elif 'cnn_ids' in conf_network['name']:
+            model = ConvNetIDS(width=conf_network['width'], init_type = conf_network['init_type'], \
+                                compress_bias = conf_network['compress_bias'], vanilla = conf_network['vanilla'], mode = conf_network['mode'], \
+                                boundary = conf_network['boundary'], no_shift=conf_network['no_shift'])
         else:
             network_name = conf_network['name']
             raise Exception(f'Not implemented for network {network_name}')
@@ -488,7 +493,12 @@ class Trainer:
         elif 'vgg' in conf_network['name']:
             prob_models = {'conv3x3': BitEstimator(9 if not conf_network['single_prob_model'] else 1),
                             'dense1': BitEstimator(1), 'dense2': BitEstimator(2), 'dense3': BitEstimator(3)}
-    
+        elif 'cnn_ids' in conf_network['name']:
+            prob_models = {
+                        'conv3x3':BitEstimator(9 if not conf_network['single_prob_model'] else 1),
+                        'dense':BitEstimator(1)
+                        }
+
         if conf_ffcv['enabled']:
             use_blurpool = conf_network['apply_blur']
             scaler = GradScaler()
