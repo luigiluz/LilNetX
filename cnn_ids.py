@@ -51,6 +51,7 @@ class ConvNetIDS(nn.Module):
         )
 
     def forward(self, x):
+        x = x.float()
         x = self.feature_extraction_layer(x)
         x = torch.flatten(x, 1)
         x = self.binary_classification_layer(x)
