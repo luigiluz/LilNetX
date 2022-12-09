@@ -672,7 +672,7 @@ class Trainer:
         data_time = AverageMeter('Data', ':6.3f')
         losses = AverageMeter('Loss', ':.3e')
         losses_reg = AverageMeter('Loss_reg', ':.3e')
-        top1 = AverageMeter('Acc@1', ':6.2f')
+        top1 = AverageMeter('Acc@1', '')
         # top5 = AverageMeter('Acc@5', ':6.2f')
         net_bytes = AverageMeter('Bytes', ':.2e')
         lr = AverageMeter('LR', ':.4f')
@@ -799,7 +799,7 @@ class Trainer:
 
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
-        top1 = AverageMeter('Acc@1', ':6.2f')
+        top1 = AverageMeter('Acc@1', '')
         # top5 = AverageMeter('Acc@5', ':6.2f')
         val_loader = self.val_loader
         model = self.model
