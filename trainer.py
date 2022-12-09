@@ -245,19 +245,18 @@ class Trainer:
             trainset = torchvision.datasets.ImageFolder(
                                                 train_path,
                                                 transform_train)
-        elif conf_dataset['name'] == 'aut-eth-ids':
-            train_path = os.path.join(conf_dataset['trainroot'], 'train')
-            while os.path.exists(os.path.join(train_path,'train')):
-                train_X_path = os.path.join(train_path,'X_train_agg_labeled.npz')
-                train_y_path = os.path.join(train_path,'y_train_agg_labeled.npz')
+        elif conf_dataset['name'] == 'avtp-intrusion':
+            conf_dataset['num_classes'] = 1
+            if (conf_dataset['from_drive']):
+                root_path = "/content/drive/MyDrive/data"
 
-            X = load_X_data(train_X_path)
-            y = load_y_data(train_y_path)
+                X = load_X_data(f"{root_path}/{conf_dataset['train_ids']['x']}")
+                y = load_y_data(f"{root_path}/{conf_dataset['train_ids']['y']}")
 
-            _, counts = np.unique(np.array(y), return_counts=True)
-            print(f"Dindoors has {counts[0]} bening Xis and {counts[1]} injected Xis")
+                _, counts = np.unique(np.array(y), return_counts=True)
+                print(f"Trainset has {counts[0]} bening Xis and {counts[1]} injected Xis")
 
-            trainset = merge_X_y_data(X, y)
+                trainset = merge_X_y_data(X, y)
 
         if self.dist.is_dist():
             train_sampler = ch.utils.data.distributed.DistributedSampler(trainset)
@@ -307,6 +306,17 @@ class Trainer:
             testset = torchvision.datasets.ImageFolder(
                                                 val_path,
                                                 transform_test)
+        elif conf_dataset['name'] == 'avtp-intrusion':
+            if (conf_dataset['from_drive']):
+                root_path = "/content/drive/MyDrive/data"
+
+                X = load_X_data(f"{root_path}/{conf_dataset['test_ids']['x']}")
+                y = load_y_data(f"{root_path}/{conf_dataset['test_ids']['y']}")
+
+                _, counts = np.unique(np.array(y), return_counts=True)
+                print(f"Testset has {counts[0]} bening Xis and {counts[1]} injected Xis")
+
+                testset = merge_X_y_data(X, y)
 
         test_sampler = ch.utils.data.SequentialSampler(testset)
 
