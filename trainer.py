@@ -800,12 +800,12 @@ class Trainer:
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
         top1 = AverageMeter('Acc@1', ':6.2f')
-        top5 = AverageMeter('Acc@5', ':6.2f')
+        # top5 = AverageMeter('Acc@5', ':6.2f')
         val_loader = self.val_loader
         model = self.model
         progress = ProgressMeter(
             len(val_loader),
-            [batch_time, losses, top1, top5],
+            [batch_time, losses, top1],
             prefix='Test: ')
 
         # switch to evaluate mode
@@ -835,10 +835,10 @@ class Trainer:
                     loss = self.criterion(output, target)
 
                     # measure accuracy and record loss
-                    acc1, acc5 = accuracy(output, target, topk=(1, 5))
+                    acc1 = accuracy(output, target, topk=(1,))
                     losses.update(loss.item(), images.size(0))
                     top1.update(acc1[0], images.size(0))
-                    top5.update(acc5[0], images.size(0))
+                    # top5.update(acc5[0], images.size(0))
 
                     # measure elapsed time
                     batch_time.update(time.time() - end)
@@ -875,11 +875,11 @@ class Trainer:
                                 ac_bytes += len(self.torchac.encode_float_cdf(cdf.detach().cpu(), weight_pos.detach().cpu().to(ch.int16), \
                                                                 check_input_bounds=True))
 
-            print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'.format(top1=top1, top5=top5)+ \
+            print(' * Acc@1 {top1.avg:.3f}'.format(top1=top1)+ \
                   'Net Bytes {bytes}'.format(bytes=bits//8000) if not conf_network['vanilla'] else ''+ \
                  f' Ac Bytes {ac_bytes//1000}' if conf_logger['use_ac'] and not conf_network['vanilla'] else '')
         if conf_wandb['enabled']:
-            self.wandb.log({"loss_val": losses.avg, "top1_val": top1.avg, "top5_val": top5.avg, "net_bytes_val": bits//8000}, commit=False)
+            self.wandb.log({"loss_val": losses.avg, "top1_val": top1.avg, "net_bytes_val": bits//8000}, commit=False)
             if conf_logger['use_ac']:
                 self.wandb.log({"ac_bytes":ac_bytes//1000}, commit=False)
 
