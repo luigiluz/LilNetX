@@ -697,6 +697,8 @@ class Trainer:
         group_decay = conf_gd['weights']
 
         for i, (images, target) in enumerate(train_loader):
+            if (conf_trainer["convert"]):
+                images, target = images.float(), target.reshape(-1, 1).float()
 
             if conf_trainer['max_batches']>0 and (i+1)%conf_trainer['max_batches']==0:
                 break

@@ -22,6 +22,7 @@ trainer:
   train_batch: 256   # Train batch size
   test_batch: 256   # Test batch size
   max_batches: -1   # Number of batches per training epoch, useful for debugging, -1 for full training
+  convert: True # Convert the data to float and reshape (exclusively for avtp intrusion dataset)
 
 # FFCV hyperparameters
 ffcv:
