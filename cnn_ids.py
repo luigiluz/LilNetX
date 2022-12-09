@@ -42,7 +42,8 @@ class ConvNetIDS(nn.Module):
 
         self.binary_classification_layer = nn.Sequential(
             nn.Dropout(p=0.3),
-            Linear(in_features=20416, out_features=64),
+            Linear(in_features=20416, out_features=64, weight_decoder=weight_decoders['dense'], bias_decoder=bias_decoders['dense'],\
+                         compress_bias = compress_bias),
             nn.Dropout(p=0.3),
             nn.ReLU(),
             Linear(in_features=64, out_features=1, weight_decoder=weight_decoders['dense'], bias_decoder=bias_decoders['dense'],\
