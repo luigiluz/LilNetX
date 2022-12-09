@@ -781,8 +781,8 @@ class Trainer:
             batch_time.update(time.time() - end)
             end = time.time()
 
-            if i % conf_logger['print_freq'] == 0 or (i+1)==len(train_loader) and self.dist.is_master():
-                progress.display(i, cur_lr)
+            # if i % conf_logger['print_freq'] == 0 or (i+1)==len(train_loader) and self.dist.is_master():
+                # progress.display(i, cur_lr)
 
         if conf_wandb['enabled']:
             assert cur_lr == get_lr(optimizer)
