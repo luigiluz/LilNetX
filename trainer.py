@@ -199,7 +199,8 @@ class Trainer:
 
         prob_optimizer = ch.optim.Adam(prob_model_parameters, lr = conf_sched['prob_lr'])
 
-        self.criterion = nn.CrossEntropyLoss().to(self.dist.device)
+        self.criterion = nn.BCEWithLogitsLoss().to(self.dist.device)
+        # self.criterion = nn.CrossEntropyLoss().to(self.dist.device)
         order_dict = {'l2':2, 'l1':1, 'linf':float('inf')}
         self.order = order_dict[conf_gd['order']]
 
