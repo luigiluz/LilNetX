@@ -771,7 +771,7 @@ class Trainer:
                 optimizer.step()
                 prob_optimizer.step()
 
-            acc1, _ = accuracy(output, target, topk=(1,))
+            acc1 = accuracy(output, target, topk=(1,))
             losses.update(loss.item(), images.size(0))
             top1.update(acc1[0], images.size(0))
             # top5.update(acc5[0], images.size(0))
