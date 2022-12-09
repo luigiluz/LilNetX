@@ -18,9 +18,9 @@ class ConvNetIDS(nn.Module):
         bias_decoders = {}
         max_fan = 64*width # Revisar o valor dessa variavel
         var = 24.0/max_fan/((2*boundary+1)**2-1)
-        weight_decoders['conv3x3'] = ConvDecoder(9,init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
+        weight_decoders['conv5x5'] = ConvDecoder(15,init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
         weight_decoders['dense'] = DenseDecoder(init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
-        groups = ['conv3x3', 'dense']
+        groups = ['conv5x5', 'dense']
         for group in groups:
             bias_decoders[group] =  DenseDecoder(init_type, np.sqrt(var), no_shift) if compress_bias and not vanilla \
                                      else nn.Identity()
