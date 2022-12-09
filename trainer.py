@@ -673,7 +673,7 @@ class Trainer:
         losses = AverageMeter('Loss', ':.3e')
         losses_reg = AverageMeter('Loss_reg', ':.3e')
         top1 = AverageMeter('Acc@1', ':6.2f')
-        top5 = AverageMeter('Acc@5', ':6.2f')
+        # top5 = AverageMeter('Acc@5', ':6.2f')
         net_bytes = AverageMeter('Bytes', ':.2e')
         lr = AverageMeter('LR', ':.4f')
         train_loader = self.train_loader
@@ -787,8 +787,8 @@ class Trainer:
         if conf_wandb['enabled']:
             assert cur_lr == get_lr(optimizer)
             self.wandb.log({"lr": cur_lr,"loss_train": losses.avg, "loss_reg_train": losses_reg.avg,\
-                    "top1_train": top1.avg, "top5_train": top5.avg, "net_bytes": net_bytes.avg/1000}, commit=False)
-    
+                    "top1_train": top1.avg, "net_bytes": net_bytes.avg/1000}, commit=False)
+
 
     def validate(self):
         conf_network = config.get_conf_network(self.conf)
