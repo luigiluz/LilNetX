@@ -795,6 +795,7 @@ class Trainer:
         conf_ffcv = config.get_conf_ffcv(self.conf)
         conf_logger = config.get_conf_logger(self.conf)
         conf_wandb = config.get_conf_wandb(self.conf)
+        conf_trainer = config.get_conf_train(self.conf)
 
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
@@ -821,7 +822,8 @@ class Trainer:
             end = time.time()
             with autocast(enabled=conf_ffcv['enabled']):
                 for i, (images, target) in enumerate(val_loader):
-
+                    if (conf_trainer["convert"]):
+                        images, target = images.float(), target.reshape(-1, 1).float()
                     if ch.cuda.is_available() and not conf_ffcv['enabled']:
                         images = images.to(self.dist.device)
                         target = target.to(self.dist.device)
