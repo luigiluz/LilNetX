@@ -45,7 +45,8 @@ class ConvNetIDS(nn.Module):
             Linear(in_features=20416, out_features=64),
             nn.Dropout(p=0.3),
             nn.ReLU(),
-            Linear(in_features=64, out_features=1)
+            Linear(in_features=64, out_features=1, weight_decoder=weight_decoders['dense'], bias_decoder=bias_decoders['dense'],\
+                         compress_bias = compress_bias)
         )
 
     def forward(self, x):
