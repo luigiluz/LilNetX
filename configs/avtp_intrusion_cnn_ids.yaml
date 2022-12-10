@@ -113,10 +113,10 @@ losses:
     bn: 0.0   # Batch-norm params
     bias: 0.0   # Bias params
     decoder: 0.0   # Decoder params
-    modules: ['conv1x1', 'conv3x3', 'dense']   # Weight parameter groups to apply L2 reg
+    modules: ['conv1x1', 'conv3x3', 'dense', 'conv5x5']   # Weight parameter groups to apply L2 reg
   gd:   # Group decay values
     weights: 1.0e-6   # Conv/FC weight params
-    modules: ['conv3x3']   # Weight parameter groups to apply group decay regularization
+    modules: ['conv3x3', 'conv5x5']   # Weight parameter groups to apply group decay regularization
     enable_l1: False   # Enable L1 weight decay as well for the weight groups with same weight
     order: 'l2'   # Type of group decay, 'l2' for 2-norm, 'l1' for 1-norm, 'linf' for infinity-norm
 
