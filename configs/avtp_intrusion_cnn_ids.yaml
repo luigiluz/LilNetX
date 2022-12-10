@@ -120,7 +120,7 @@ optimizer:
   momentum: 0.9   # Momentum parameter for SGD
   use_nesterov: False   # Enable Nesterov momentum for SGD
   grad_clip: 0.0   # Clip gradient based on L2-norm of weights, set to 0 for disabling
-
+  logits: True # Use criterion with logits
 
 
 

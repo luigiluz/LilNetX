@@ -194,13 +194,14 @@ class Trainer:
         if conf_optimizer['name'] == 'adam':
             optimizer = ch.optim.Adam(param_groups, lr=conf_sched['arch_lr'])
         elif conf_optimizer['name'] == 'sgd':
-            optimizer = ch.optim.SGD(param_groups, lr=conf_sched['arch_lr'], 
+            optimizer = ch.optim.SGD(param_groups, lr=conf_sched['arch_lr'],
                             momentum=conf_optimizer['momentum'], nesterov=conf_optimizer['use_nesterov'])
 
         prob_optimizer = ch.optim.Adam(prob_model_parameters, lr = conf_sched['prob_lr'])
 
-        self.criterion = nn.BCEWithLogitsLoss().to(self.dist.device)
-        # self.criterion = nn.CrossEntropyLoss().to(self.dist.device)
+        self.criterion = nn.CrossEntropyLoss().to(self.dist.device)
+        if conf_optimizer['logits'] == True:
+            self.criterion = nn.BCEWithLogitsLoss().to(self.dist.device)
         order_dict = {'l2':2, 'l1':1, 'linf':float('inf')}
         self.order = order_dict[conf_gd['order']]
 
