@@ -53,11 +53,11 @@ common:
 # Wandb logging params
 wandb:
   enabled: True   # Enable wandb logging
-  project_name: 'test_lilnetx'   # Wandb project name
+  project_name: 'cnn_ids_lilnetx'   # Wandb project name
   run_name: 'cifar10_r20_v1'   # Wandb run name
   dir: '_copy: /checkpoint/save_dir'   # Directory for saving wandb logged data
   resume: True   # Resume parameter for wandb init
-  entity: 'user'   # Wandb username
+  entity: 'lfml'   # Wandb username
 
 # Standard logging params
 logging:
