@@ -875,7 +875,7 @@ class Trainer:
                                 ac_bytes += len(self.torchac.encode_float_cdf(cdf.detach().cpu(), weight_pos.detach().cpu().to(ch.int16), \
                                                                 check_input_bounds=True))
 
-            print(' * Acc@1 {top1.avg:.3f}'.format(top1=top1)+ \
+            print(' * Acc@1 {top1.avg}'.format(top1=top1)+ \
                   'Net Bytes {bytes}'.format(bytes=bits//8000) if not conf_network['vanilla'] else ''+ \
                  f' Ac Bytes {ac_bytes//1000}' if conf_logger['use_ac'] and not conf_network['vanilla'] else '')
         if conf_wandb['enabled']:
