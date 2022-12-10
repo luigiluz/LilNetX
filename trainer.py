@@ -709,7 +709,10 @@ class Trainer:
 
         lr_start, lr_end = self.calc_lr(epoch, conf_sched['type']), self.calc_lr(epoch + 1, conf_sched['type'])
         iters = len(self.train_loader)
-        lrs = np.interp(np.arange(iters), [0, iters], [lr_start, lr_end])
+        if (conf_sched['type'] == "default"):
+            lrs = [conf_sched['arch_lr'], conf_sched['arch_lr']]
+        else:
+            lrs = np.interp(np.arange(iters), [0, iters], [lr_start, lr_end])
 
         weight_decay = conf_wd['weights']
         group_decay = conf_gd['weights']
