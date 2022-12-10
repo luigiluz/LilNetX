@@ -709,9 +709,7 @@ class Trainer:
 
         lr_start, lr_end = self.calc_lr(epoch, conf_sched['type']), self.calc_lr(epoch + 1, conf_sched['type'])
         iters = len(self.train_loader)
-        if (conf_sched['type'] == "default"):
-            lrs = [conf_sched['arch_lr'], conf_sched['arch_lr']]
-        else:
+        if (conf_sched['type'] != "default"):
             lrs = np.interp(np.arange(iters), [0, iters], [lr_start, lr_end])
 
         weight_decay = conf_wd['weights']
@@ -727,7 +725,10 @@ class Trainer:
             if ch.cuda.is_available() and not conf_ffcv['enabled']:
                 images = images.to(self.dist.device)
                 target = target.to(self.dist.device)
-            cur_lr = lrs[i]
+            if (conf_sched['type'] == "default"):
+                cur_lr = conf_sched['arch_lr']
+            else:
+                cur_lr = lrs[i]
             adjust_learning_rate(optimizer, cur_lr)
             # measure data loading time
             data_time.update(time.time() - end)
