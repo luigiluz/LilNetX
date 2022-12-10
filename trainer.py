@@ -144,6 +144,9 @@ class Trainer:
             'default': conf_sched['arch_lr']
         }
 
+        if (lr_schedule_type == "default"):
+            return conf_sched['arch_lr'], conf_sched['arch_lr']
+
         return lr_schedules[lr_schedule_type](epoch)
 
     def get_resolution(self, epoch):
