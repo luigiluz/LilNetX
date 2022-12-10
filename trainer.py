@@ -139,8 +139,9 @@ class Trainer:
                                                   conf_sched['warmup_epochs'], conf_sched['plateau_epochs']),
             'cosine': lambda epoch: get_cosine_lr(epoch, conf_sched['arch_lr'], conf_trainer['epochs'], 
                                                   conf_sched['warmup_epochs'], conf_sched['plateau_epochs']),
-            'step': lambda epoch: get_step_lr(epoch, conf_sched['arch_lr'], conf_sched['gamma'], conf_sched['decay_steps'], 
-                                              conf_trainer['epochs'])
+            'step': lambda epoch: get_step_lr(epoch, conf_sched['arch_lr'], conf_sched['gamma'], conf_sched['decay_steps'],
+                                              conf_trainer['epochs']),
+            'default': conf_sched['arch_lr']
         }
 
         return lr_schedules[lr_schedule_type](epoch)
