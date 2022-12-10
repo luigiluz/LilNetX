@@ -8,6 +8,27 @@ from layers import Conv2d, Linear, ConvDecoder, DenseDecoder
 from torch import Tensor
 from torch.autograd import Variable
 
+def _weights_init(m, var, mode, vanilla):
+    classname = m.__class__.__name__
+    if isinstance(m, Linear) or isinstance(m, Conv2d):
+        if not vanilla:
+            fan = init._calculate_correct_fan(m.weight, mode=mode)
+            boundary = (np.sqrt(24.0/(var*fan)+1)-1)/2.0
+            init.uniform_(m.weight,-boundary,boundary)
+        else:
+            init.kaiming_normal_(m.weight, mode=mode, nonlinearity='relu')
+    elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+        nn.init.constant_(m.weight, 1)
+        nn.init.constant_(m.bias, 0)
+
+class LambdaLayer(nn.Module):
+    def __init__(self, lambd):
+        super(LambdaLayer, self).__init__()
+        self.lambd = lambd
+
+    def forward(self, x):
+        return self.lambd(x)
+
 class ConvNetIDS(nn.Module):
     def __init__(self, width=1, init_type='random', compress_bias = False, vanilla=False,\
                  mode='fan_out', boundary=10, no_shift=False):
@@ -18,6 +39,7 @@ class ConvNetIDS(nn.Module):
         bias_decoders = {}
         max_fan = 64*width # Revisar o valor dessa variavel
         var = 24.0/max_fan/((2*boundary+1)**2-1)
+        print(f"convnetids var = {var}")
         weight_decoders['conv5x5'] = ConvDecoder(25,init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
         weight_decoders['dense'] = DenseDecoder(init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
         groups = ['conv5x5', 'dense']
@@ -49,6 +71,8 @@ class ConvNetIDS(nn.Module):
             Linear(in_features=64, out_features=1, weight_decoder=weight_decoders['dense'], bias_decoder=bias_decoders['dense'],\
                          compress_bias = compress_bias)
         )
+
+        self.apply(lambda m: _weights_init(m, var, mode, vanilla))
 
     def forward(self, x):
         x = self.feature_extraction_layer(x)
