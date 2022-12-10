@@ -251,7 +251,7 @@ class Trainer:
         elif conf_dataset['name'] == 'avtp-intrusion':
             conf_dataset['num_classes'] = 1
             if (conf_dataset['from_drive']):
-                root_path = "/content/drive/MyDrive/data"
+                root_path = conf_dataset["drive_path"]
 
                 X = load_X_data(f"{root_path}/{conf_dataset['train_ids']['x']}")
                 y = load_y_data(f"{root_path}/{conf_dataset['train_ids']['y']}")
@@ -265,6 +265,13 @@ class Trainer:
             train_sampler = ch.utils.data.distributed.DistributedSampler(trainset)
         else:
             train_sampler = ch.utils.data.RandomSampler(trainset)
+
+        if conf_dataset['splitter']:
+            import pickle
+            with open(f"{conf_dataset['drive_path']}/{conf_dataset['splitter_path']}", 'rb') as f:
+                splitter_dict = pickle.load(f)
+
+            train_sampler = ch.utils.data.SubsetRandomSampler(splitter_dict[str(conf_dataset['fold'])]['train_idx'])
 
         batch_size = conf_trainer['train_batch'] // conf_dist['world_size']
 
@@ -311,7 +318,7 @@ class Trainer:
                                                 transform_test)
         elif conf_dataset['name'] == 'avtp-intrusion':
             if (conf_dataset['from_drive']):
-                root_path = "/content/drive/MyDrive/data"
+                root_path = conf_dataset["drive_path"]
 
                 X = load_X_data(f"{root_path}/{conf_dataset['test_ids']['x']}")
                 y = load_y_data(f"{root_path}/{conf_dataset['test_ids']['y']}")
@@ -322,6 +329,12 @@ class Trainer:
                 testset = merge_X_y_data(X, y)
 
         test_sampler = ch.utils.data.SequentialSampler(testset)
+        if conf_dataset['splitter']:
+            import pickle
+            with open(f"{conf_dataset['drive_path']}/{conf_dataset['splitter_path']}", 'rb') as f:
+                splitter_dict = pickle.load(f)
+
+            test_sampler = ch.utils.data.SubsetRandomSampler(splitter_dict[str(conf_dataset['fold'])]['test_idx'])
 
         batch_size = conf_trainer['test_batch'] 
 

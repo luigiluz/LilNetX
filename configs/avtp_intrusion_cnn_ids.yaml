@@ -71,15 +71,21 @@ dataset:
   name: 'avtp-intrusion'   # Dataset name, choose from ['cifar10', 'cifar100', 'imagenet']
   # Only used in 'avtp-intrusion'
   from_drive: True
+  drive_path: "/content/drive/MyDrive/data"
   train_ids:
     x: 'train/X_train_agg_labeled.npz'
     y: 'train/y_train_agg_labeled.npz'
   test_ids:
-    x: 'test/X_test_agg_labeled.npz'
-    y: 'test/y_test_agg_labeled.npz'
+    x: 'train/X_train_agg_labeled.npz'
+    y: 'train/y_train_agg_labeled.npz'
+    # x: 'test/X_test_agg_labeled.npz'
+    # y: 'test/y_test_agg_labeled.npz'
   trainroot: 'data/'   # Root directory containing train data (or root filename if FFCV)
   valroot: '_copy: /dataset/trainroot' # Root directory containing test data (or root filename if FFCV)
   num_workers: 4   # Number of workers for dataloading
+  splitter: True
+  splitter_path: 'splitter_dict.pkl'
+  fold: 0
 
 # Network architecture params
 network:
