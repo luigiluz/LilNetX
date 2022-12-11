@@ -37,7 +37,7 @@ ffcv:
 
 # LR Scheduling hyperparams
 lr_schedule:
-  arch_lr: 0.001   # LR for architecture as well as weight decoders parameters
+  arch_lr: 0.01   # LR for architecture as well as weight decoders parameters
   type: 'cosine'   # Type of LR schedule, choose from ['nstep', 'cosine', 'cyclic']
   decay_steps: [75, 125]   # Epochs to decay LR if schedule is nstep
   gamma: 0.1   # Decay step parameter for LR if schedule is nstep
@@ -98,7 +98,7 @@ network:
   init_type: 'random'
   compress_bias: False   # Quantize and decode biases as well
   mode: 'fan_out'   # Initialization mode for weights
-  boundary: 3   # Boundary value used for controlling weight variance, refer to paper supplementary for details
+  boundary: 0.6   # Boundary value used for controlling weight variance, refer to paper supplementary for details
   no_shift: True   # Disable shift parameter if true. Necessary for computational benefits in terms of slice sparsity for decoded weights
   single_prob_model: False   # Use single probability model for every dimension of a single weight group
   first: True # Quantize mobilenet first convolution
