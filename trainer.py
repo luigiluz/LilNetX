@@ -33,6 +33,10 @@ from cnn_ids import ConvNetIDS
 from npz_loader import load_X_data, load_y_data, merge_X_y_data
 
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406]) * 255
 IMAGENET_STD = np.array([0.229, 0.224, 0.225]) * 255
@@ -693,6 +697,10 @@ class Trainer:
         losses = AverageMeter('Loss', ':.3e')
         losses_reg = AverageMeter('Loss_reg', ':.3e')
         top1 = AverageMeter('Acc@1', '')
+        prec = AverageMeter('Prec@1', '')
+        f1 = AverageMeter('F1@1', '')
+        recall = AverageMeter("Recall@1", '')
+        roc_auc = AverageMeter("ROC@1", '')
         # top5 = AverageMeter('Acc@5', ':6.2f')
         net_bytes = AverageMeter('Bytes', ':.2e')
         lr = AverageMeter('LR', ':.4f')
@@ -796,9 +804,26 @@ class Trainer:
                 prob_optimizer.step()
 
             # acc1 = accuracy(output, target, topk=(1,))
-            acc1 = accuracy_imp(output, target)
+            # convert
+            output = output.cpu()
+            target = target.cpu()
+            output_prob = output.reshape(-1).detach().numpy()
+            output_round = output_prob.round()
+
+            # compute
+            acc1 = accuracy_imp(output_round, target)
+            prec1 = prec_imp(output_round, target)
+            f11 = f1_imp(output_round, target)
+            recall1 = recall_imp(output_round, target)
+            roc_auc1 = recall_imp(output_prob, target)
+
+            # update
             losses.update(loss.item(), images.size(0))
             top1.update(acc1[0], images.size(0))
+            prec.update(prec1[0], images.size(0))
+            f1.update(f11[0], images.size(0))
+            recall.update(recall1[0], images.size(0))
+            roc_auc.update(roc_auc1[0], images.size(0))
             # top5.update(acc5[0], images.size(0))
             lr.update(cur_lr)
 
@@ -812,7 +837,9 @@ class Trainer:
         if conf_wandb['enabled']:
             assert cur_lr == get_lr(optimizer)
             self.wandb.log({"lr": cur_lr,"loss_train": losses.avg, "loss_reg_train": losses_reg.avg,\
-                    "top1_train": top1.avg, "net_bytes": net_bytes.avg/1000}, commit=False)
+                    "top1_train": top1.avg, \
+                    "prec_train": prec.avg, "f1_train": f1.avg, "recall_train": recall.avg, "roc_auc_train": roc_auc.avg, \
+                    "net_bytes": net_bytes.avg/1000}, commit=False)
 
 
     def validate(self):
@@ -825,6 +852,10 @@ class Trainer:
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
         top1 = AverageMeter('Acc@1', '')
+        prec = AverageMeter('Prec@1', '')
+        f1 = AverageMeter('F1@1', '')
+        recall = AverageMeter("Recall@1", '')
+        roc_auc = AverageMeter("ROC@1", '')
         # top5 = AverageMeter('Acc@5', ':6.2f')
         val_loader = self.val_loader
         model = self.model
@@ -860,10 +891,28 @@ class Trainer:
                     loss = self.criterion(output, target)
 
                     # measure accuracy and record loss
-                    # acc1 = accuracy(output, target, topk=(1,))
-                    acc1 = accuracy_imp(output, target)
+                    # convert
+                    output = output.cpu()
+                    target = target.cpu()
+                    output_prob = output.reshape(-1).detach().numpy()
+                    output_round = output_prob.round()
+
+                    # compute
+                    acc1 = accuracy_imp(output_round, target)
+                    prec1 = prec_imp(output_round, target)
+                    f11 = f1_imp(output_round, target)
+                    recall1 = recall_imp(output_round, target)
+                    roc_auc1 = recall_imp(output_prob, target)
+
+                    # update
                     losses.update(loss.item(), images.size(0))
                     top1.update(acc1[0], images.size(0))
+                    prec.update(prec1[0], images.size(0))
+                    f1.update(f11[0], images.size(0))
+                    recall.update(recall1[0], images.size(0))
+                    roc_auc.update(roc_auc1[0], images.size(0))
+
+                    losses.update(loss.item(), images.size(0))
                     # top5.update(acc5[0], images.size(0))
 
                     # measure elapsed time
@@ -905,7 +954,8 @@ class Trainer:
                   'Net Bytes {bytes}'.format(bytes=bits//8000) if not conf_network['vanilla'] else ''+ \
                  f' Ac Bytes {ac_bytes//1000}' if conf_logger['use_ac'] and not conf_network['vanilla'] else '')
         if conf_wandb['enabled']:
-            self.wandb.log({"loss_val": losses.avg, "top1_val": top1.avg, "net_bytes_val": bits//8000}, commit=False)
+            self.wandb.log({"loss_val": losses.avg, "top1_val": top1.avg, "net_bytes_val": bits//8000, \
+                    "prec_val": prec.avg, "f1_val": f1.avg, "recall_val": recall.avg, "roc_auc_val": roc_auc.avg}, commit=False)
             if conf_logger['use_ac']:
                 self.wandb.log({"ac_bytes":ac_bytes//1000}, commit=False)
 
@@ -1037,8 +1087,16 @@ def accuracy(output, target, topk=(1,)):
         return res
 
 def accuracy_imp(output, target):
-    output = output.cpu()
-    target = target.cpu()
-    output = output.reshape(-1).detach().numpy().round()
-
     return [accuracy_score(target, output)]
+
+def prec_imp(output, target):
+    return [precision_score(target, output)]
+
+def f1_imp(output, target):
+    return [f1_score(target, output)]
+
+def recall_imp(output, target):
+    return [recall_score(target, output)]
+
+def roc_auc_imp(output, target):
+    return [roc_auc_score(target, output)]
