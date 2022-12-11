@@ -14,6 +14,7 @@ def _weights_init(m, var, mode, vanilla):
         if not vanilla:
             fan = init._calculate_correct_fan(m.weight, mode=mode)
             boundary = (np.sqrt(24.0/(var*fan)+1)-1)/2.0
+            print(f"classname = {classname}, fan = {fan}, boundary = {boundary}")
             init.uniform_(m.weight,-boundary,boundary)
         else:
             init.kaiming_normal_(m.weight, mode=mode, nonlinearity='relu')
@@ -37,7 +38,7 @@ class ConvNetIDS(nn.Module):
         # TODO: Add weight decoders initialization
         weight_decoders = {}
         bias_decoders = {}
-        max_fan = 64*width # Revisar o valor dessa variavel
+        max_fan = 1600*width # Revisar o valor dessa variavel
         var = 24.0/max_fan/((2*boundary+1)**2-1)
         print(f"convnetids var = {var}")
         weight_decoders['conv5x5'] = ConvDecoder(25,init_type, np.sqrt(var), no_shift) if not vanilla else nn.Identity()
