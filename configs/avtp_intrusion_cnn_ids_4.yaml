@@ -9,7 +9,7 @@ dist:
 
 # Checkpoint related params
 checkpoint:
-  save_dir: 'results/cifar10_r20'  # Checkpoint save directory
+  save_dir: '/content/drive/MyDrive/data/checkpoints/cnn_ids_lilnetx_fold4'  # Checkpoint save directory
   filename: 'checkpoint.pth'   # Checkpoint filename
   resume: False   # Whether to resume training from existing checkpoint
   resume_path: 'results/cifar10_r20/checkpoint.pth'   # Path to resume checkpoint if resume enabled
@@ -54,7 +54,7 @@ common:
 wandb:
   enabled: True   # Enable wandb logging
   project_name: 'cnn_ids_lilnetx'   # Wandb project name
-  run_name: 'cifar10_r20_v1'   # Wandb run name
+  run_name: 'cnn_ids_lilnetx_fold4'   # Wandb run name
   dir: '_copy: /checkpoint/save_dir'   # Directory for saving wandb logged data
   resume: True   # Resume parameter for wandb init
   entity: 'lfml'   # Wandb username
@@ -85,7 +85,7 @@ dataset:
   num_workers: 4   # Number of workers for dataloading
   splitter: True
   splitter_path: 'splitter_dict.pkl'
-  fold: 0
+  fold: 4
 
 # Network architecture params
 network:
