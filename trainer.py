@@ -815,7 +815,7 @@ class Trainer:
             prec1 = prec_imp(output_round, target)
             f11 = f1_imp(output_round, target)
             recall1 = recall_imp(output_round, target)
-            roc_auc1 = recall_imp(output_prob, target)
+            roc_auc1 = roc_auc_imp(output_prob, target)
 
             # update
             losses.update(loss.item(), images.size(0))
@@ -902,7 +902,7 @@ class Trainer:
                     prec1 = prec_imp(output_round, target)
                     f11 = f1_imp(output_round, target)
                     recall1 = recall_imp(output_round, target)
-                    roc_auc1 = recall_imp(output_prob, target)
+                    roc_auc1 = roc_auc_imp(output_prob, target)
 
                     # update
                     losses.update(loss.item(), images.size(0))
