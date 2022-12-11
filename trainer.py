@@ -1041,4 +1041,4 @@ def accuracy_imp(output, target):
     target = target.cpu()
     output = output.reshape(-1).detach().numpy().round()
 
-    return accuracy_score(target, output)
+    return [accuracy_score(target, output)]
