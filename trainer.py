@@ -32,6 +32,8 @@ from resnet_cifar import _resnet_cifar, BasicBlockCifar
 from cnn_ids import ConvNetIDS
 from npz_loader import load_X_data, load_y_data, merge_X_y_data
 
+from sklearn.metrics import accuracy_score
+
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406]) * 255
 IMAGENET_STD = np.array([0.229, 0.224, 0.225]) * 255
 DEFAULT_CROP_RATIO = 224/256
@@ -793,7 +795,8 @@ class Trainer:
                 optimizer.step()
                 prob_optimizer.step()
 
-            acc1 = accuracy(output, target, topk=(1,))
+            # acc1 = accuracy(output, target, topk=(1,))
+            acc1 = accuracy_imp(output, target)
             losses.update(loss.item(), images.size(0))
             top1.update(acc1[0], images.size(0))
             # top5.update(acc5[0], images.size(0))
@@ -857,7 +860,8 @@ class Trainer:
                     loss = self.criterion(output, target)
 
                     # measure accuracy and record loss
-                    acc1 = accuracy(output, target, topk=(1,))
+                    # acc1 = accuracy(output, target, topk=(1,))
+                    acc1 = accuracy_imp(output, target)
                     losses.update(loss.item(), images.size(0))
                     top1.update(acc1[0], images.size(0))
                     # top5.update(acc5[0], images.size(0))
@@ -1031,3 +1035,10 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+def accuracy_imp(output, target):
+    output = output.cpu()
+    target = target.cpu()
+    output = output.reshape(-1).detach().numpy().round()
+
+    return accuracy_score(target, output)
