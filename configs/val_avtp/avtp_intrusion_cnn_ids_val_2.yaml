@@ -89,6 +89,7 @@ dataset:
   splitter: True
   splitter_path: 'splitter_dict.pkl'
   fold: 2
+  sampler: None
 
 # Network architecture params
 network:
