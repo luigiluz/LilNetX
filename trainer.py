@@ -1013,7 +1013,7 @@ class Trainer:
 
         if conf_logger['eval_metrics']:
             import pandas as pd
-            metrics = [top1.avg, prec.avg, f1.avg, recall.avg, roc_auc.avg]
+            metrics = [[top1.avg, prec.avg, f1.avg, recall.avg, roc_auc.avg]]
             df = pd.DataFrame(metrics, columns=['acc', 'prec', 'f1', 'recall', 'roc_auc'])
             df.to_csv(conf_logger['csv_path'])
 
