@@ -47,9 +47,11 @@ def main(gpu, conf):
     if os.path.exists(resume_path) and (conf_ckpt['stop_if_complete'] or conf_ckpt['resume']):
         ckpt = torch.load(resume_path,map_location='cpu')
         epoch = ckpt['epoch']
-        if epoch == conf_trainer['epochs']:
+        if epoch == conf_trainer['epochs'] and (conf_ckpt['run_eval'] == False):
             print(f'Experiment finished at epoch {epoch}, exiting...')
             exit()
+        else:
+            print('Running evaluation only')
         del ckpt
         conf_common['new_seed'] = int(torch.rand(1)[0]*1e6)
 
