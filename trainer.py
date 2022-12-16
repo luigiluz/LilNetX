@@ -848,6 +848,11 @@ class Trainer:
         conf_logger = config.get_conf_logger(self.conf)
         conf_wandb = config.get_conf_wandb(self.conf)
         conf_trainer = config.get_conf_train(self.conf)
+        conf_ckpt = config.get_conf_checkpoint(self.conf)
+
+        if conf_logger['use_ac'] and conf_ckpt['run_eval']:
+            import torchac
+            self.torchac = torchac
 
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
