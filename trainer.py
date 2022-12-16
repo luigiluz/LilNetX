@@ -339,6 +339,8 @@ class Trainer:
                 testset = merge_X_y_data(X, y)
 
         test_sampler = ch.utils.data.SequentialSampler(testset)
+        if conf_dataset['sampler'] == 'random':
+            test_sampler = ch.utils.data.RandomSampler(testset)
         if conf_dataset['splitter']:
             import pickle
             with open(f"{conf_dataset['drive_path']}/{conf_dataset['splitter_path']}", 'rb') as f:
