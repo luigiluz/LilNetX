@@ -101,7 +101,7 @@ def main(gpu, conf):
     if not conf_common['eval_only']:
         trainer.train(g)
     else:
-        trainer.eval()
+        trainer.validate()
 
     if conf_wandb['enabled']:
         wandb.finish()
