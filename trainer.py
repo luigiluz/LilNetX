@@ -1011,6 +1011,12 @@ class Trainer:
             if conf_logger['use_ac']:
                 self.wandb.log({"ac_bytes":ac_bytes//1000}, commit=False)
 
+        if conf_logger['eval_metrics']:
+            import pandas as pd
+            metrics = [top1.avg, prec.avg, f1.avg, recall.avg, roc_auc.avg]
+            df = pd.DataFrame(metrics, columns=['acc', 'prec', 'f1', 'recall', 'roc_auc'])
+            df.to_csv(conf_logger['csv_path'])
+
         return top1.avg, bits, ac_bytes if conf_logger['use_ac'] else 0
 
 
