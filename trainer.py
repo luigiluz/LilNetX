@@ -853,6 +853,27 @@ class Trainer:
         if conf_logger['use_ac'] and conf_ckpt['run_eval']:
             import torchac
             self.torchac = torchac
+        if conf_wandb['enabled'] and conf_ckpt['run_eval']:
+            import wandb
+            self.wandb = wandb
+            wandb.define_metric("epoch")
+            wandb.define_metric("lr", step_metric="epoch")
+            wandb.define_metric("loss_train", step_metric="epoch")
+            wandb.define_metric("loss_reg_train", step_metric="epoch")
+            wandb.define_metric("top1_train", step_metric="epoch")
+            wandb.define_metric("top5_train", step_metric="epoch")
+            wandb.define_metric("net_bytes", step_metric="epoch")
+            wandb.define_metric("timings", step_metric="epoch")
+            wandb.define_metric("loss_val", step_metric="epoch")
+            wandb.define_metric("top1_val", step_metric="epoch")
+            wandb.define_metric("top5_val", step_metric="epoch")
+            wandb.define_metric("net_bytes_val", step_metric="epoch")
+            wandb.define_metric("ac_bytes", step_metric="epoch")
+            if conf_logger['calc_sparse_stats']:
+                for suffix in ['discrete', 'decoded']:
+                    for sparse_type in ['','in_','out_','slice_']:
+                        wandb.define_metric(f"sparse_{sparse_type}{suffix}", step_metric="epoch")
+
 
         batch_time = AverageMeter('Time', ':6.3f')
         losses = AverageMeter('Loss', ':.4e')
