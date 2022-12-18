@@ -1107,7 +1107,7 @@ class Trainer:
             else:
                 print(f'Resume checkpoint {resume_path} not found, starting training from scratch...')
 
-        mean_inference_time = calculate_inference_time(self.model, "cpu")
+        mean_inference_time = calculate_inference_time(self.model, self.dist.device)
 
         print(f"Mean inference time = {mean_inference_time}")
 
