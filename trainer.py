@@ -38,6 +38,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import roc_auc_score
 
+from metrics import calculate_inference_time
+
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406]) * 255
 IMAGENET_STD = np.array([0.229, 0.224, 0.225]) * 255
 DEFAULT_CROP_RATIO = 224/256
@@ -1075,6 +1077,39 @@ class Trainer:
             h = param.size(2)
             w = param.size(3)
             return f'conv{h}x{w}'
+
+    def calc_inference_time(self):
+        conf_ckpt = config.get_conf_checkpoint(self.conf)
+        conf_common = config.get_conf_common(self.conf)
+        conf_dist = config.get_conf_dist(self.conf)
+
+        if conf_ckpt['resume']:
+            model, prob_models = self.model, self.prob_models
+            optimizer, prob_optimizer = self.optimizer, self.prob_optimizer
+            start_epoch = best_acc1 = best_epoch = 0
+            save_path = os.path.join(conf_ckpt['save_dir'],conf_ckpt['filename'])
+            resume_path = save_path if not conf_ckpt['resume_path'] else conf_ckpt['resume_path']
+            if os.path.exists(resume_path):
+                ckpt = ch.load(resume_path, map_location='cpu')
+                start_epoch = ckpt['epoch']
+                model.load_state_dict(update_state_dict(model.state_dict(),ckpt['model']))
+                for group_name in prob_models:
+                    prob_models[group_name].load_state_dict(update_state_dict(prob_models[group_name].state_dict(),ckpt['prob_models'][group_name]))
+                optimizer.load_state_dict(ckpt['optimizer'])
+                prob_optimizer.load_state_dict(ckpt['prob_optimizer'])
+                best_acc1 = ckpt['best_acc1']
+                best_epoch = ckpt['best_epoch']
+                print(f'Checkpoint found, continuing training from epoch {start_epoch}')
+                new_seed = conf_common['seed']
+                setup_cuda(new_seed,conf_dist['local_rank'])
+                print(f'Changing random seed to {new_seed}')
+                del ckpt
+            else:
+                print(f'Resume checkpoint {resume_path} not found, starting training from scratch...')
+
+        mean_inference_time = calculate_inference_time(self.model, "cpu")
+
+        print(f"Mean inference time = {mean_inference_time}")
 
 class AverageMeter(object):
     """Computes and stores the average and current value"""

@@ -50,6 +50,7 @@ lr_schedule:
 common:
   seed: 420   # Random seed for training (TODO: exact reproducibility is still not guaranteed)
   eval_only: True   # Only perform evaluation
+  inf_time: True # Perform inference time evaluation
 
 # Wandb logging params
 wandb:

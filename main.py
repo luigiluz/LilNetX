@@ -100,6 +100,8 @@ def main(gpu, conf):
 
     if not conf_common['eval_only']:
         trainer.train(g)
+    elif conf_common['inf_time']:
+        trainer.calc_inference_time()
     else:
         trainer.validate()
 
