@@ -48,14 +48,16 @@ class DistUtils:
             assert dist.get_world_size() == self.world_size
             assert dist.get_rank() == self.global_rank
 
+        if conf_dist['gpu']:
+            assert self.world_size >= 1
+            assert self.local_rank >= 0 and self.local_rank < self.world_size
+            assert self.global_rank >= 0 and self.global_rank < self.world_size
 
-        assert self.world_size >= 1
-        assert self.local_rank >= 0 and self.local_rank < self.world_size
-        assert self.global_rank >= 0 and self.global_rank < self.world_size
-
-        assert self._gpu < torch.cuda.device_count()
-        self.device = torch.device('cuda', self._gpu)
-        self._setup_gpus(self._seed)
+            assert self._gpu < torch.cuda.device_count()
+            self.device = torch.device('cuda', self._gpu)
+            self._setup_gpus(self._seed)
+        else:
+            self.device = torch.device('cpu')
 
         if self._ddp is not None and dist.is_initialized():
             print(f'Dist initialized, gpu: {self._gpu}, '+\
@@ -95,7 +97,10 @@ class DistUtils:
         self.world_size = conf_dist['world_size']
         self.local_rank = conf_dist['local_rank']
         self.global_rank = conf_dist['local_rank']
-        self._gpu = self.local_rank % torch.cuda.device_count()
+        if conf_dist['gpu']:
+            self._gpu = self.local_rank % torch.cuda.device_count()
+        else:
+            self._gpu = 0
 
     def is_dist(self)->bool:
         return self._dist_enable

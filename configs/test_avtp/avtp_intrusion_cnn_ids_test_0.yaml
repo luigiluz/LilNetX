@@ -6,6 +6,7 @@ dist:
   port: 12355   # Distributed training port
   address: 'localhost'   # Distributed training address
   sync_bn: False   # Converts all BatchNorm layers in the network to SyncBatchNorm when distributed training (TODO: untested)
+  gpu: False
 
 # Checkpoint related params
 checkpoint:

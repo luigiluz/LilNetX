@@ -112,6 +112,14 @@ def gpu_wrapper(model: nn.Module, dist: DistUtils):
         raise ValueError
     return model
 
+def cpu_wrapper(model: nn.Module, dist: DistUtils):
+    model = None
+    if dist['gpu'] == False:
+        device = ch.device('cpu')
+        model = model.to(device)
+
+    return model
+
 def update_state_dict(cur_state_dict, new_state_dict):
     cur_keys = list(cur_state_dict.keys())
     new_keys = list(new_state_dict.keys())
@@ -469,6 +477,7 @@ class Trainer:
         conf_network = config.get_conf_network(self.conf)
         conf_dataset = config.get_conf_dataset(self.conf)
         conf_ffcv = config.get_conf_ffcv(self.conf)
+        conf_dist = config.get_conf_dist(self.conf)
         if conf_network['name'] in cifar_networks:
             if 'resnet' in conf_network['name']:
                 model = _resnet_cifar(BasicBlockCifar, [3,3,3], width=conf_network['width'], init_type = conf_network['init_type'],\
@@ -553,11 +562,17 @@ class Trainer:
                 for group in prob_models:
                     prob_models[group] = gpu_wrapper(prob_models[group],self.dist)
         else:
-            model = gpu_wrapper(model, self.dist)
-            for group in prob_models:
-                prob_models[group] = gpu_wrapper(prob_models[group],self.dist)
+            if conf_dist['gpu']:
+                model = gpu_wrapper(model, self.dist)
+                for group in prob_models:
+                    prob_models[group] = gpu_wrapper(prob_models[group],self.dist)
+            else:
+                model = cpu_wrapper(model, self.dist)
+                for group in prob_models:
+                    prob_models[group] = cpu_wrapper(prob_models[group],self.dist)
+
             scaler = None
-    
+
         return model, prob_models, scaler
 
 
