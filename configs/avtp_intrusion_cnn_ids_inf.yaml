@@ -6,17 +6,17 @@ dist:
   port: 12355   # Distributed training port
   address: 'localhost'   # Distributed training address
   sync_bn: False   # Converts all BatchNorm layers in the network to SyncBatchNorm when distributed training (TODO: untested)
-  gpu: True
+  gpu: False
 
 # Checkpoint related params
 checkpoint:
   save_dir: '/content/drive/MyDrive/data/checkpoints/cnn_ids_lilnetx_pruned_fold0'  # Checkpoint save directory
   filename: 'checkpoint.pth'   # Checkpoint filename
-  resume: False   # Whether to resume training from existing checkpoint
-  resume_path: '/content/drive/MyDrive/data/checkpoints/cnn_ids_lilnetx_pruned_fold0/checkpoint.pth'   # Path to resume checkpoint if resume enabled
+  resume: True   # Whether to resume training from existing checkpoint
+  resume_path: '/content/drive/MyDrive/data/checkpoints/cnn_ids_lilnetx_pruned_fold0/model_best.pth.tar'   # Path to resume checkpoint if resume enabled
   stop_if_complete: True   # Doesn't restart training if {save_dir/filename} is a checkpoint after completed training
   clear_if_exists: False   # Deletes checkpoint save directory if exists
-  run_eval: False
+  run_eval: True
 
 # Training hyperparams
 trainer:
@@ -50,7 +50,8 @@ lr_schedule:
 # Miscellaneous common params
 common:
   seed: 420   # Random seed for training (TODO: exact reproducibility is still not guaranteed)
-  eval_only: False   # Only perform evaluation
+  eval_only: True   # Only perform evaluation
+  inf_time: True # Perform inference time evaluation
 
 # Wandb logging params
 wandb:
