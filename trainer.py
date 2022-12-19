@@ -30,6 +30,7 @@ from dist_utils import DistUtils
 from resnet import _resnet, BasicBlock, Bottleneck, BlurPoolConv2d
 from resnet_cifar import _resnet_cifar, BasicBlockCifar
 from cnn_ids import ConvNetIDS
+from cnn_ids_pruned import ConvNetIDSPruned
 from npz_loader import load_X_data, load_y_data, merge_X_y_data
 
 from sklearn.metrics import accuracy_score
@@ -498,8 +499,12 @@ class Trainer:
                             compress_bias = conf_network['compress_bias'], vanilla = conf_network['vanilla'], mode = conf_network['mode'], \
                             boundary = conf_network['boundary'], num_classes = conf_dataset['num_classes'], large = large, \
                             no_shift=conf_network['no_shift'])
-        elif 'cnn_ids' in conf_network['name']:
+        elif conf_network['name'] == 'cnn_ids' :
             model = ConvNetIDS(width=conf_network['width'], init_type = conf_network['init_type'], \
+                                compress_bias = conf_network['compress_bias'], vanilla = conf_network['vanilla'], mode = conf_network['mode'], \
+                                boundary = conf_network['boundary'], no_shift=conf_network['no_shift'])
+        elif conf_network['name'] == 'cnn_ids_pruned':
+            model = ConvNetIDSPruned(width=conf_network['width'], init_type = conf_network['init_type'], \
                                 compress_bias = conf_network['compress_bias'], vanilla = conf_network['vanilla'], mode = conf_network['mode'], \
                                 boundary = conf_network['boundary'], no_shift=conf_network['no_shift'])
         else:
