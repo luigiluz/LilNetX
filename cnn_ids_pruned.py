@@ -59,7 +59,7 @@ class ConvNetIDSPruned(nn.Module):
 
             Conv2d(in_channels=27, out_channels=26, kernel_size=5, stride=1, padding='same', weight_decoder=weight_decoders['conv5x5'], bias_decoder=bias_decoders['conv5x5']),
             nn.ReLU(),
-            nn.BatchNorm2d(64, eps=0.001, momentum=0.9),
+            nn.BatchNorm2d(26, eps=0.001, momentum=0.9),
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
 
