@@ -116,7 +116,7 @@ def cpu_wrapper(model: nn.Module, dist: DistUtils):
     model = None
     if dist['gpu'] == False:
         device = ch.device('cpu')
-        model = model.to(device)
+        model = nn.DataParallel(model).to(device)
 
     return model
 
